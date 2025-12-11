@@ -29,6 +29,7 @@ function getSSLCertificate(domain, port = 443) {
       const certificate = res.socket.getPeerCertificate();
       
       if (!certificate || Object.keys(certificate).length === 0) {
+        req.destroy();
         reject(new Error('No certificate found'));
         return;
       }
@@ -52,6 +53,9 @@ function getSSLCertificate(domain, port = 443) {
         expiryDate = date.toISOString().replace('.000Z', '');
       }
 
+      // Destroy the request after getting certificate info
+      req.destroy();
+      
       resolve({
         certCN: certCN,
         issuer: issuer,
@@ -59,8 +63,6 @@ function getSSLCertificate(domain, port = 443) {
         valid_from: certificate.valid_from,
         valid_to: certificate.valid_to
       });
-
-      req.abort();
     });
 
     req.on('error', (error) => {

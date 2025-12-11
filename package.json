@@ -1,5 +1,5 @@
 {
-  "name": "sslcecker",
+  "name": "sslchecker",
   "version": "1.0.0",
   "description": "SSL domain Checker API",
   "main": "server.js",

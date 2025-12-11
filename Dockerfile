@@ -6,7 +6,10 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies (disable strict SSL for environments with certificate issues)
+# Install dependencies
+# Note: strict-ssl is temporarily disabled during build to handle environments with
+# certificate issues. In production, ensure your npm registry has proper SSL certificates.
+# For security-critical deployments, consider using a private npm registry with valid certs.
 RUN npm config set strict-ssl false && npm install && npm config set strict-ssl true
 
 # Copy application files
