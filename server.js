@@ -49,11 +49,11 @@ function getSSLCertificate(domain, port = 443) {
         certCN = certificate.subject.CN;
       }
 
-      // Format expiry date
+      // Format expiry date (remove milliseconds and Z)
       let expiryDate = null;
       if (certificate.valid_to) {
         const date = new Date(certificate.valid_to);
-        expiryDate = date.toISOString().replace('.000Z', '');
+        expiryDate = date.toISOString().slice(0, -5);
       }
 
       // Destroy the request after getting certificate info
@@ -87,7 +87,7 @@ app.get('/api/Domains/:domain', async (req, res) => {
   // Validate port parameter
   let port = 443;
   if (portParam) {
-    port = parseInt(portParam);
+    port = parseInt(portParam, 10);
     if (isNaN(port) || port < 1 || port > 65535) {
       return res.status(400).json({
         error: 'Invalid port number',
@@ -101,8 +101,8 @@ app.get('/api/Domains/:domain', async (req, res) => {
     // Fetch SSL certificate information
     const certInfo = await getSSLCertificate(domain, port);
 
-    // Create the response object
-    const lastChecked = new Date().toISOString().replace('.000Z', '');
+    // Create the response object (format timestamp without milliseconds)
+    const lastChecked = new Date().toISOString().slice(0, -5);
     
     const domainCheck = {
       domainName: domain,
