@@ -1,6 +1,5 @@
 const express = require('express');
 const https = require('https');
-const tls = require('tls');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +16,10 @@ let nextId = 1;
  */
 function getSSLCertificate(domain, port = 443) {
   return new Promise((resolve, reject) => {
+    // Note: rejectUnauthorized is set to false to allow checking certificates
+    // even if they are expired, self-signed, or have validation issues.
+    // This is intentional as the purpose is to retrieve certificate information,
+    // not to validate its trustworthiness.
     const options = {
       host: domain,
       port: port,
@@ -69,12 +72,6 @@ function getSSLCertificate(domain, port = 443) {
       reject(error);
     });
 
-    req.on('socket', (socket) => {
-      socket.on('secureConnect', () => {
-        // Certificate is available after secure connection
-      });
-    });
-
     req.end();
   });
 }
@@ -85,7 +82,20 @@ function getSSLCertificate(domain, port = 443) {
  */
 app.get('/api/Domains/:domain', async (req, res) => {
   const domain = req.params.domain;
-  const port = parseInt(req.query.port) || 443;
+  const portParam = req.query.port;
+  
+  // Validate port parameter
+  let port = 443;
+  if (portParam) {
+    port = parseInt(portParam);
+    if (isNaN(port) || port < 1 || port > 65535) {
+      return res.status(400).json({
+        error: 'Invalid port number',
+        message: 'Port must be a number between 1 and 65535',
+        providedPort: portParam
+      });
+    }
+  }
 
   try {
     // Fetch SSL certificate information
