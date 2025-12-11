@@ -2,6 +2,12 @@
 
 SSL domain checker API built with Node.js and Express. This API allows you to check SSL certificate information for any domain.
 
+## ⚠️ Security Notice
+
+This API intentionally disables SSL certificate validation to allow checking certificates from any domain, including those with expired, self-signed, or otherwise invalid certificates. The purpose is to retrieve certificate information for analysis, not to validate certificate trustworthiness. 
+
+**Do not use this API to make security decisions about whether to trust a domain.** It's designed for certificate monitoring and information gathering purposes only.
+
 ## Features
 
 - Check SSL certificate details for any domain
