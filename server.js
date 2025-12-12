@@ -51,9 +51,15 @@ function getSSLCertificate(domain, port = 443) {
 
       // Format expiry date (remove milliseconds and Z)
       let expiryDate = null;
+      let daysLeft = null;
       if (certificate.valid_to) {
         const date = new Date(certificate.valid_to);
         expiryDate = date.toISOString().slice(0, -5);
+        
+        // Calculate days left until expiry
+        const now = new Date();
+        const timeDiff = date.getTime() - now.getTime();
+        daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
       }
 
       // Destroy the request after getting certificate info
@@ -63,6 +69,7 @@ function getSSLCertificate(domain, port = 443) {
         certCN: certCN,
         issuer: issuer,
         expiryDate: expiryDate,
+        daysLeft: daysLeft,
         valid_from: certificate.valid_from,
         valid_to: certificate.valid_to
       });
@@ -110,6 +117,7 @@ app.get('/api/Domains/:domain', async (req, res) => {
       certCN: certInfo.certCN,
       issuer: certInfo.issuer,
       expiryDate: certInfo.expiryDate,
+      daysLeft: certInfo.daysLeft,
       lastChecked: lastChecked,
       userId: "User",
       agent: 0,

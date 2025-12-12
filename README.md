@@ -11,7 +11,7 @@ This API intentionally disables SSL certificate validation to allow checking cer
 ## Features
 
 - Check SSL certificate details for any domain
-- Returns certificate CN, issuer, expiry date, and more
+- Returns certificate CN, issuer, expiry date, and days left until expiration
 - RESTful API endpoint
 - Docker support for easy deployment
 
@@ -35,6 +35,7 @@ GET /api/Domains/pingsut.com
     "certCN": "pingsut.com",
     "issuer": "Google Trust Services",
     "expiryDate": "2026-01-25T03:26:37",
+    "daysLeft": 43,
     "lastChecked": "2025-12-11T04:00:15.1441294",
     "userId": "User",
     "agent": 0,
