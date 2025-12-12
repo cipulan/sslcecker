@@ -4,6 +4,9 @@ const https = require('https');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Constants
+const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+
 // In-memory storage for domain checks (simulating database)
 let domainChecks = [];
 let nextId = 1;
@@ -59,7 +62,7 @@ function getSSLCertificate(domain, port = 443) {
         // Calculate days left until expiry
         const now = new Date();
         const timeDiff = date.getTime() - now.getTime();
-        daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        daysLeft = Math.floor(timeDiff / MILLISECONDS_PER_DAY);
       }
 
       // Destroy the request after getting certificate info
